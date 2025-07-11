@@ -30,7 +30,7 @@ placement = (
 # --- FastMCP 서버 설정 ---
 mcp = FastMCP(
     "Vertex AI Search for Retail API",
-    "소매업을 위한 Vertex AI Search를 사용하여 제품 카탈로그를 검색하는 에이전트입니다."
+    "A mcp server that searches a product catalog using Vertex AI Search for Retail."
 )
 
 @mcp.tool
