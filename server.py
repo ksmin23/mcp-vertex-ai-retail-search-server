@@ -5,29 +5,29 @@ from fastmcp import FastMCP
 from google.api_core.exceptions import InvalidArgument
 from google.cloud import retail_v2
 
-# .env 파일에서 환경 변수 로드
+# Load environment variables from .env file
 load_dotenv()
 
-# --- Google Cloud 설정 ---
+# --- Google Cloud Settings ---
 PROJECT_ID = os.getenv("PROJECT_ID")
-LOCATION = os.getenv("LOCATION", "global")  # 기본값은 'global'
+LOCATION = os.getenv("LOCATION", "global")  # Default to 'global'
 CATALOG_ID = os.getenv("CATALOG_ID")
-SERVING_CONFIG_ID = os.getenv("SERVING_CONFIG_ID", "default_serving_config") # 기본 서빙 구성
+SERVING_CONFIG_ID = os.getenv("SERVING_CONFIG_ID", "default_serving_config") # Default serving config
 
-# 필수 환경 변수 확인
+# Check for required environment variables
 if not all([PROJECT_ID, LOCATION, CATALOG_ID, SERVING_CONFIG_ID]):
     raise ValueError(
-        "다음 환경 변수를 .env 파일에 설정해야 합니다: "
+        "The following environment variables must be set in the .env file: "
         "PROJECT_ID, LOCATION, CATALOG_ID, SERVING_CONFIG_ID"
     )
 
-# API 호출을 위한 Placement 문자열 구성
+# Construct the placement string for API calls
 placement = (
     f"projects/{PROJECT_ID}/locations/{LOCATION}/"
     f"catalogs/{CATALOG_ID}/servingConfigs/{SERVING_CONFIG_ID}"
 )
 
-# --- FastMCP 서버 설정 ---
+# --- FastMCP Server Setup ---
 mcp = FastMCP(
     "Vertex AI Search for Retail API",
     "A mcp server that searches a product catalog using Vertex AI Search for Retail."
@@ -47,45 +47,45 @@ def search_products(query: str, visitor_id: str = "guest-user") -> list[dict]:
     """
     try:
         search_client = retail_v2.SearchServiceClient()
-        product_client = retail_v2.ProductServiceClient()  # 제품 정보 조회를 위한 클라이언트
+        product_client = retail_v2.ProductServiceClient()  # Client for fetching product details
 
         search_request = retail_v2.SearchRequest(
             placement=placement,
             query=query,
             visitor_id=visitor_id,
-            page_size=5,  # 반환할 결과 수를 5개로 제한
+            page_size=5,  # Limit the number of results to 5
         )
         
-        print(f"Vertex AI Search 요청: {search_request}")
+        print(f"Vertex AI Search request: {search_request}")
         
         search_response = search_client.search(request=search_request)
         
-        print(f"Vertex AI Search 응답: {search_response}")
+        print(f"Vertex AI Search response: {search_response}")
 
         results = []
         for result in search_response.results:
-            # 검색 결과에서 제품의 전체 리소스 이름을 가져옵니다.
+            # Get the full resource name of the product from the search result.
             product_name = result.product.name
-            print(f"상세 정보��� 조회할 제품: {product_name}")
+            print(f"Fetching details for product: {product_name}")
 
-            # ProductServiceClient를 사용하여 제품의 전체 상세 정보를 가져옵니다.
+            # Use ProductServiceClient to get the full details of the product.
             product_detail = product_client.get_product(name=product_name)
             
-            # 상세 정보를 딕셔너리로 변환하여 결과 목록에 추가합니다.
+            # Convert the detailed information to a dictionary and add it to the results list.
             product_dict = retail_v2.Product.to_dict(product_detail)
             results.append(product_dict)
             
         return results
 
     except InvalidArgument as e:
-        print(f"API 호출 오류: {e}")
-        return {"error": "잘못된 인자입니다. serving config를 확인하세요.", "details": str(e)}
+        print(f"API call error: {e}")
+        return {"error": "Invalid argument. Please check your serving config.", "details": str(e)}
     except Exception as e:
-        print(f"예상치 못한 오류: {e}")
-        return {"error": "제품 검색 중 오류가 발생했습니다.", "details": str(e)}
+        print(f"Unexpected error: {e}")
+        return {"error": "An error occurred while searching for products.", "details": str(e)}
 
 
 if __name__ == "__main__":
-    print("Vertex AI Search for Retail MCP 서버를 시작합니다.")
-    print(f"설정된 Placement: {placement}")
+    print("Starting Vertex AI Search for Retail MCP server.")
+    print(f"Placement set to: {placement}")
     mcp.run()
