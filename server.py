@@ -33,6 +33,10 @@ mcp = FastMCP(
     "A mcp server that searches a product catalog using Vertex AI Search for Retail."
 )
 
+# Initialize clients once to be reused in the function
+search_client = retail_v2.SearchServiceClient()
+product_client = retail_v2.ProductServiceClient()
+
 @mcp.tool
 def search_products(query: str, visitor_id: str = "guest-user") -> list[dict]:
     """
@@ -46,9 +50,6 @@ def search_products(query: str, visitor_id: str = "guest-user") -> list[dict]:
         list[dict]: A list of dictionaries containing the full details of the found products.
     """
     try:
-        search_client = retail_v2.SearchServiceClient()
-        product_client = retail_v2.ProductServiceClient()  # Client for fetching product details
-
         search_request = retail_v2.SearchRequest(
             placement=placement,
             query=query,
