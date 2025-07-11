@@ -36,14 +36,14 @@ mcp = FastMCP(
 @mcp.tool
 def search_products(query: str, visitor_id: str = "guest-user") -> list[dict]:
     """
-    제품 카탈로그에서 주어진 검색어로 제품을 검색하고, 각 제품의 상세 정보를 조회하여 반환합니다.
+    Searches the product catalog for a given query and returns the detailed information for each product found.
 
     Args:
-        query (str): 검색할 제품 키워드 (예: "청바지", "운동화").
-        visitor_id (str): 사용자를 식별하는 고유 ID. 개인화된 결과를 위해 사용됩니다.
+        query (str): The product keyword to search for (e.g., "jeans", "sneakers").
+        visitor_id (str): A unique ID to identify the user, used for personalized results.
 
     Returns:
-        list[dict]: 검색된 제품의 전체 상세 정보 목록.
+        list[dict]: A list of dictionaries containing the full details of the found products.
     """
     try:
         search_client = retail_v2.SearchServiceClient()
