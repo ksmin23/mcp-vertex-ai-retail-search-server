@@ -1,0 +1,3 @@
+fastmcp
+google-cloud-retail
+python-dotenv
