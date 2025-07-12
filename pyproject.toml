@@ -1,0 +1,17 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mcp_search_server"
+version = "0.1.0"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "fastmcp==2.10.4",
+    "python-dotenv",
+    "google-cloud-retail",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]

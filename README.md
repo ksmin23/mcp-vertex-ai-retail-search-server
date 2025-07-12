@@ -60,17 +60,28 @@
 
 ## 서버 실행
 
-가상 환경이 활성화된 상태에서 아래 명령어를 실행하여 MCP 서버를 시작합니다.
+`uv`의 실행 기능을 사용하여 Python 스크립트를 직접 실행할 수 있습니다.
 
 ```bash
-python3 server.py
+uv run python src/mcp_search_server/main.py
+```
+
+### 서버 실행 (fastmcp 사용)
+
+`fastmcp` 라이브러리에서 제공하는 CLI를 사용하여 서버를 실행할 수도 있습니다. 이 방법은 `FastMCP` 인스턴스를 자동으로 찾아 실행해줍니다.
+
+`mcp` 인스턴스가 위치한 모듈 경로를 지정하여 실행합니다. `--port` 옵션을 사용하여 기본 포트(8080) 대신 다른 포트를 지정할 수 있습니다.
+
+```bash
+uv run fastmcp run src/mcp_search_server/main.py --transport http --port 9000
 ```
 
 서버가 정상적으로 시작되면 다음과 같은 메시지가 출력됩니다.
 ```
-Vertex AI Search for Retail MCP 서버를 시작합니다.
-설정된 Placement: projects/your-gcp-project-id/locations/global/catalogs/default_catalog/servingConfigs/default_serving_config
-* Running on http://127.0.0.1:8080
+INFO:     Started server process [12345]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:9000 (Press CTRL+C to quit)
 ```
 
 ## 제공되는 도구
