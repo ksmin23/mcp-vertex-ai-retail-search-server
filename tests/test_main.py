@@ -1,13 +1,9 @@
-# tests/test_server.py
+# tests/test_main.py
 import os
-import sys
 import unittest
 from unittest.mock import patch, MagicMock
 from google.api_core.exceptions import InvalidArgument
 from google.cloud import retail_v2
-
-# Add the project root to sys.path to allow importing the 'server' module
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 # Set environment variables for testing
 os.environ['PROJECT_ID'] = 'test-project'
@@ -15,12 +11,12 @@ os.environ['LOCATION'] = 'global'
 os.environ['CATALOG_ID'] = 'test-catalog'
 os.environ['SERVING_CONFIG_ID'] = 'test-config'
 
-from server import search_products, product_client
+from src.mcp_search_server.main import search_products, product_client
 
 class TestSearchProducts(unittest.TestCase):
 
-    @patch('server.retail_v2.SearchServiceClient')
-    @patch('server.product_client', new_callable=MagicMock)
+    @patch('src.mcp_search_server.main.retail_v2.SearchServiceClient')
+    @patch('src.mcp_search_server.main.product_client', new_callable=MagicMock)
     def test_search_products_success_stream(self, mock_product_client, mock_search_client):
         """
         Tests if the search_products function successfully calls the API and streams the results.
@@ -66,7 +62,7 @@ class TestSearchProducts(unittest.TestCase):
         expected_results = [retail_v2.Product.to_dict(mock_product_detail)]
         self.assertEqual(results, expected_results)
 
-    @patch('server.retail_v2.SearchServiceClient')
+    @patch('src.mcp_search_server.main.retail_v2.SearchServiceClient')
     def test_search_products_api_error(self, mock_search_client):
         """
         Tests that an error message is correctly returned when an API call exception occurs.
