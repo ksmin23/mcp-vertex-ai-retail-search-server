@@ -38,16 +38,16 @@ search_client = retail_v2.SearchServiceClient()
 product_client = retail_v2.ProductServiceClient()
 
 @mcp.tool
-def search_products(query: str, visitor_id: str = "guest-user") -> list[dict]:
+def search_products(query: str, visitor_id: str = "guest-user"):
     """
-    Searches the product catalog for a given query and returns the detailed information for each product found.
+    Searches the product catalog for a given query and streams the detailed information for each product found.
 
     Args:
         query (str): The product keyword to search for (e.g., "jeans", "sneakers").
         visitor_id (str): A unique ID to identify the user, used for personalized results.
 
-    Returns:
-        list[dict]: A list of dictionaries containing the full details of the found products.
+    Yields:
+        dict: A dictionary containing the full details of each found product.
     """
     try:
         search_request = retail_v2.SearchRequest(
@@ -63,7 +63,6 @@ def search_products(query: str, visitor_id: str = "guest-user") -> list[dict]:
         
         print(f"Vertex AI Search response: {search_response}")
 
-        results = []
         for result in search_response.results:
             # Get the full resource name of the product from the search result.
             product_name = result.product.name
@@ -72,21 +71,21 @@ def search_products(query: str, visitor_id: str = "guest-user") -> list[dict]:
             # Use ProductServiceClient to get the full details of the product.
             product_detail = product_client.get_product(name=product_name)
             
-            # Convert the detailed information to a dictionary and add it to the results list.
-            product_dict = retail_v2.Product.to_dict(product_detail)
-            results.append(product_dict)
-            
-        return results
+            print(product_detail)
 
+            # Convert the detailed information to a dictionary and yield it.
+            product_dict = retail_v2.Product.to_dict(product_detail)
+            yield product_dict
+            
     except InvalidArgument as e:
         print(f"API call error: {e}")
-        return {"error": "Invalid argument. Please check your serving config.", "details": str(e)}
+        yield {"error": "Invalid argument. Please check your serving config.", "details": str(e)}
     except Exception as e:
         print(f"Unexpected error: {e}")
-        return {"error": "An error occurred while searching for products.", "details": str(e)}
+        yield {"error": "An error occurred while searching for products.", "details": str(e)}
 
 
 if __name__ == "__main__":
     print("Starting Vertex AI Search for Retail MCP server.")
     print(f"Placement set to: {placement}")
-    mcp.run()
+    mcp.run(transport="http")
