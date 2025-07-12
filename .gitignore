@@ -1,3 +1,9 @@
 # Environments
 .env
 .venv/
+
+# Python cache
+__pycache__/
+
+# Temporary scripts
+commit_changes.sh
