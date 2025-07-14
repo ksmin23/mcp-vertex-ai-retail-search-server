@@ -3,7 +3,7 @@ requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "mcp_search_server"
+name = "mcp_vertexai_retail_search"
 version = "0.1.0"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -13,5 +13,4 @@ dependencies = [
     "google-cloud-retail",
 ]
 
-[tool.setuptools.packages.find]
-where = ["src"]
+

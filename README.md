@@ -63,7 +63,7 @@
 `uv`의 실행 기능을 사용하여 Python 스크립트를 직접 실행할 수 있습니다.
 
 ```bash
-uv run python src/mcp_search_server/main.py
+uv run python src/server.py
 ```
 
 ### 서버 실행 (fastmcp 사용)
@@ -73,7 +73,7 @@ uv run python src/mcp_search_server/main.py
 `mcp` 인스턴스가 위치한 모듈 경로를 지정하여 실행합니다. `--port` 옵션을 사용하여 기본 포트(8080) 대신 다른 포트를 지정할 수 있습니다.
 
 ```bash
-uv run fastmcp run src/mcp_search_server/main.py --transport http --port 9000
+uv run fastmcp run src/server.py --transport http --port 9000
 ```
 
 서버가 정상적으로 시작되면 다음과 같은 메시지가 출력됩니다.

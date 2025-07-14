@@ -1,4 +1,4 @@
-# tests/test_main.py
+# tests/test_server.py
 import os
 import unittest
 from unittest.mock import patch, MagicMock
@@ -11,12 +11,12 @@ os.environ['LOCATION'] = 'global'
 os.environ['CATALOG_ID'] = 'test-catalog'
 os.environ['SERVING_CONFIG_ID'] = 'test-config'
 
-from src.mcp_search_server.main import search_products, product_client
+from src.server import search_products, product_client
 
 class TestSearchProducts(unittest.TestCase):
 
-    @patch('src.mcp_search_server.main.retail_v2.SearchServiceClient')
-    @patch('src.mcp_search_server.main.product_client', new_callable=MagicMock)
+    @patch('src.server.retail_v2.SearchServiceClient')
+    @patch('src.server.product_client', new_callable=MagicMock)
     def test_search_products_success_stream(self, mock_product_client, mock_search_client):
         """
         Tests if the search_products function successfully calls the API and streams the results.
@@ -62,7 +62,7 @@ class TestSearchProducts(unittest.TestCase):
         expected_results = [retail_v2.Product.to_dict(mock_product_detail)]
         self.assertEqual(results, expected_results)
 
-    @patch('src.mcp_search_server.main.retail_v2.SearchServiceClient')
+    @patch('src.server.retail_v2.SearchServiceClient')
     def test_search_products_api_error(self, mock_search_client):
         """
         Tests that an error message is correctly returned when an API call exception occurs.
