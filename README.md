@@ -28,7 +28,7 @@
 
 2.  **환경 변수 설정**
 
-    프로젝트 루트�� 있는 `.env.example` 파일을 `.env` 파일로 복사한 후, 파일 내용을 자신의 Google Cloud 환경에 맞게 수정합니다.
+    프로젝트 루트 디렉터리에 있는 `.env.example` 파일을 `.env` 파일로 복사한 후, 파일 내용을 자신의 Google Cloud 환경에 맞게 수정합니다.
 
     ```bash
     cp .env.example .env
