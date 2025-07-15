@@ -1,4 +1,7 @@
-# server.py
+#!/usr/bin/env python3
+# -*- encoding: utf-8 -*-
+# vim: tabstop=2 shiftwidth=2 softtabstop=2 expandtab
+
 import os
 from dotenv import load_dotenv
 from fastmcp import FastMCP
@@ -13,6 +16,9 @@ PROJECT_ID = os.getenv("PROJECT_ID")
 LOCATION = os.getenv("LOCATION", "global")  # Default to 'global'
 CATALOG_ID = os.getenv("CATALOG_ID")
 SERVING_CONFIG_ID = os.getenv("SERVING_CONFIG_ID", "default_serving_config") # Default serving config
+
+print(PROJECT_ID)
+print(CATALOG_ID)
 
 # Check for required environment variables
 if not all([PROJECT_ID, LOCATION, CATALOG_ID, SERVING_CONFIG_ID]):
@@ -56,11 +62,11 @@ def search_products(query: str, visitor_id: str = "guest-user"):
             visitor_id=visitor_id,
             page_size=5,  # Limit the number of results to 5
         )
-        
+
         print(f"Vertex AI Search request: {search_request}")
         
         search_response = search_client.search(request=search_request)
-        
+
         print(f"Vertex AI Search response: {search_response}")
 
         for result in search_response.results:
@@ -70,13 +76,11 @@ def search_products(query: str, visitor_id: str = "guest-user"):
 
             # Use ProductServiceClient to get the full details of the product.
             product_detail = product_client.get_product(name=product_name)
-            
-            print(product_detail)
 
             # Convert the detailed information to a dictionary and yield it.
             product_dict = retail_v2.Product.to_dict(product_detail)
             yield product_dict
-            
+
     except InvalidArgument as e:
         print(f"API call error: {e}")
         yield {"error": "Invalid argument. Please check your serving config.", "details": str(e)}

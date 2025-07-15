@@ -16,7 +16,7 @@
 -   [uv](https://github.com/astral-sh/uv) (빠른 Python 패키지 설치 및 가상 환경 관리 도구)
 -   [Google Cloud CLI](https://cloud.google.com/sdk/docs/install) (`gcloud`)
 
-## 설치 및 설정
+## ��치 및 설정
 
 1.  **Google Cloud 인증**
 
@@ -94,4 +94,129 @@ INFO:     Uvicorn running on http://127.0.0.1:9000 (Press CTRL+C to quit)
 -   **매개변수**:
     -   `query` (str): 검색할 제품 키워드 (예: "청바지", "운동화").
     -   `visitor_id` (str, 선택 사항): 사용자를 식별하는 고유 ID. 개인화된 검색 결과에 사용됩니다. (기본값: "guest-user")
--   **반환값**: 검색된 제품 목록 (각 제품은 `id`, `title`, `price`, `uri` 정보를 포함하는 딕셔너리).
+-   **반환값**: 검색된 제품 목록 (각 제품은 `id`, `title`, `price`, `uri` 정보를 포���하는 딕셔너리).
+
+---
+
+## Google Cloud Run 배포 안내
+
+이 섹션에서는 MCP 서버를 Google Cloud Run에 배포하는 방법을 안내합니다.
+
+### 1. 사전 준비
+
+로컬 머신에서 Google Cloud와 상호작용하기 위한 설정입니다.
+
+-   **Google Cloud SDK 설치**: `gcloud` CLI가 설치되어 있지 않다면 [공식 문서](https://cloud.google.com/sdk/docs/install)를 참고하여 설치합니다.
+
+-   **gcloud 인증**:
+    ```bash
+    gcloud auth login
+    ```
+
+-   **Google Cloud 프로젝트 설정**:
+    ```bash
+    gcloud config set project [YOUR_PROJECT_ID]
+    ```
+    *(`[YOUR_PROJECT_ID]`를 실제 GCP 프로젝트 ID로 변경하세요.)*
+
+-   **필요한 API 활성화**:
+    ```bash
+    gcloud services enable run.googleapis.com \
+        artifactregistry.googleapis.com
+    ```
+
+-   **Docker 인증 설정**:
+    ```bash
+    gcloud auth configure-docker [REGION]-docker.pkg.dev
+    ```
+    *(`[REGION]`을 `asia-northeast3`와 같은 GCP 리전으로 변경하세요.)*
+
+### 2. Dockerfile 생성
+
+프로젝트 루트에 `Dockerfile`을 생성합니다. 이 파일은 애플리케이션을 컨테이너화하는 방법을 정의합니다.
+
+```Dockerfile
+# 1. 기본 이미지 설정
+FROM python:3.11-slim
+
+# 2. 환경 변수 설정
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
+
+# 3. 작업 디렉토리 설정
+WORKDIR /app
+
+# 4. 의존성 설치
+COPY requirements.txt .
+RUN pip install uv && uv pip install --no-cache -r requirements.txt
+
+# 5. 소스 코드 복사
+COPY . .
+
+# 6. 포트 노출
+EXPOSE 8080
+
+# 7. 애플리케이션 실행
+# fastmcp CLI를 사용하여 프로덕션 환경에서 서버를 실행합니다.
+CMD ["fastmcp", "run", "src/server.py", "--transport", "http", "--host", "0.0.0.0", "--port", "8080"]
+```
+**참고**: `fastmcp`을 사용하므로, `requirements.txt`에 `fastmcp`이 포함되어 있는지 확인하세요.
+
+### 3. Artifact Registry 저장소 생성
+
+Docker 이미지를 저장할 Artifact Registry 저장소를 생성합니다.
+
+```bash
+gcloud artifacts repositories create [REPOSITORY_NAME] \
+    --repository-format=docker \
+    --location=[REGION] \
+    --description="MCP Search Server repository"
+```
+-   `[REPOSITORY_NAME]`: `mcp-repo`와 같이 원하는 저장소 이름을 지정합니다.
+-   `[REGION]`: 이전 단계에서 사용한 리전과 동일하게 지정합니다.
+
+### 4. 이미지 빌드 및 푸시
+
+컨테이너 이미지를 빌드하고 Artifact Registry에 푸시하는 방법은 두 가지가 있습니다.
+
+#### 방법 1: 로컬 Docker 사용
+
+이 방법은 로컬 컴퓨터에 Docker가 설치되어 있어야 합니다.
+
+```bash
+# 1. 이미지 빌드
+docker build -t [REGION]-docker.pkg.dev/[YOUR_PROJECT_ID]/[REPOSITORY_NAME]/mcp-vertexai-retail-search-server:latest .
+
+# 2. 이미지 푸시
+docker push [REGION]-docker.pkg.dev/[YOUR_PROJECT_ID]/[REPOSITORY_NAME]/mcp-vertexai-retail-search-server:latest
+```
+*(`[REGION]`, `[YOUR_PROJECT_ID]`, `[REPOSITORY_NAME]`을 실제 값으로 변경하세요.)*
+
+---
+
+#### 방법 2: Google Cloud Build 사용 (권장)
+
+이 방법은 로컬에 Docker를 설치할 필요가 없으며, Google Cloud의 관리형 빌드 서비스를 사용하여 더 빠르고 안정적으로 이미지를 빌드하고 푸시합니다.
+
+프로젝트 루트 디렉터리에서 다음 단일 명령어를 실행하세요.
+
+```bash
+gcloud builds submit --tag [REGION]-docker.pkg.dev/[YOUR_PROJECT_ID]/[REPOSITORY_NAME]/mcp-vertexai-retail-search-server:latest .
+```
+*(`[REGION]`, `[YOUR_PROJECT_ID]`, `[REPOSITORY_NAME]`을 실제 값으로 변경하세요.)*
+
+이 명령어는 현재 디렉터리의 소스 코드를 Cloud Build로 전송하고, `Dockerfile`을 사용하여 이미지를 빌드한 후, 지정된 태그로 Artifact Registry에 저장까지 모든 과정을 자동으로 처리합니다.
+
+### 5. Cloud Run 배포
+
+푸시된 이미지를 사용하여 Cloud Run 서비스를 배포합니다.
+
+```bash
+gcloud run deploy mcp-vaisr-server \
+    --image [REGION]-docker.pkg.dev/[YOUR_PROJECT_ID]/[REPOSITORY_NAME]/mcp-vertexai-retail-search-server:latest \
+    --region [REGION] \
+    --allow-unauthenticated
+```
+-   `--allow-unauthenticated`: 이 플래그는 누구나 서비스에 접근할 수 있도록 허용합니다. 인증이 필요한 경우 이 플래그를 제거하세요.
+
+배포가 완료되면 출력된 서비스 URL을 통해 애플리케이션에 접근할 수 있습니다.
