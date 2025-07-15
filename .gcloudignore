@@ -1,6 +1,11 @@
-# Environments
-.env
-.venv/
+# Git
+.git
+.gitignore
+.gcloudignore
+
+# Virtualenv
+.venv
+venv
 
 # Python cache
 __pycache__/
@@ -19,5 +24,5 @@ __pycache__/
 # macOS
 .DS_Store
 
-# Temporary scripts
-commit_changes.sh
+# Misc
+.env.example
