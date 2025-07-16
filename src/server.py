@@ -17,9 +17,6 @@ LOCATION = os.getenv("LOCATION", "global")  # Default to 'global'
 CATALOG_ID = os.getenv("CATALOG_ID")
 SERVING_CONFIG_ID = os.getenv("SERVING_CONFIG_ID", "default_serving_config") # Default serving config
 
-print(PROJECT_ID)
-print(CATALOG_ID)
-
 # Check for required environment variables
 if not all([PROJECT_ID, LOCATION, CATALOG_ID, SERVING_CONFIG_ID]):
     raise ValueError(

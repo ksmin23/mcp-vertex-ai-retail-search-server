@@ -17,7 +17,7 @@ class TestSearchProducts(unittest.TestCase):
 
     @patch('src.server.retail_v2.SearchServiceClient')
     @patch('src.server.product_client', new_callable=MagicMock)
-    def test_search_products_success_stream(self, mock_product_client, mock_search_client):
+    def test_search_products_success_and_streams_results(self, mock_product_client, mock_search_client):
         """
         Tests if the search_products function successfully calls the API and streams the results.
         """
@@ -44,12 +44,17 @@ class TestSearchProducts(unittest.TestCase):
 
         # --- Test Execution ---
         query = "test query"
-        results_generator = search_products.func(query) # Convert generator to list to check results
-        results = list(results_generator) # Convert generator to list to check results
+        results_generator = search_products.func(query)
 
         # --- Verification ---
         # 1. Verify that the search method was called with the correct arguments
         expected_placement = "projects/test-project/locations/global/catalogs/test-catalog/servingConfigs/test-config"
+        
+        # Iterate through the generator to check streaming behavior
+        results = []
+        for result in results_generator:
+            results.append(result)
+
         mock_search_instance.search.assert_called_once()
         called_args, called_kwargs = mock_search_instance.search.call_args
         self.assertEqual(called_kwargs['request'].placement, expected_placement)

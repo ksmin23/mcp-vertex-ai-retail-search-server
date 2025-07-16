@@ -1,28 +1,28 @@
-# 1. 기본 이미지 설정
-# Python 3.11의 가벼운 버전을 사용합니다.
+# 1. Set the base image
+# Use a lightweight version of Python 3.11.
 FROM python:3.11-slim
 
-# 2. 환경 변수 설정
-# Python이 .pyc 파일을 생성하지 않도록 하고, 출력을 버퍼링 없이 바로 표시합니다.
+# 2. Set environment variables
+# Prevents Python from writing .pyc files and buffers output directly.
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
-# 3. 작업 디렉토리 설정
+# 3. Set the working directory
 WORKDIR /app
 
-# 4. 의존성 설치
-# requirements.txt를 먼저 복사하여 Docker 캐시를 활용합니다.
+# 4. Install dependencies
+# Copy requirements.txt first to leverage Docker cache.
 COPY requirements.txt .
-# uv를 사용하여 의존성을 설치합니다.
+# Install dependencies using uv.
 RUN pip install uv && uv pip install --system --no-cache -r requirements.txt
 
-# 5. 소스 코드 복사
+# 5. Copy source code
 COPY . .
 
-# 6. 포트 노출
-# Cloud Run은 기본적으로 8080 포트를 사용합니다.
+# 6. Expose the port
+# Cloud Run uses port 8080 by default.
 EXPOSE 8080
 
-# 7. 애플리케이션 실행
-# fastmcp CLI를 사용하여 프로덕션 환경에서 서버를 실행합니다.
+# 7. Run the application
+# Use the fastmcp CLI to run the server in a production environment.
 CMD ["fastmcp", "run", "src/server.py", "--transport", "streamable-http", "--host", "0.0.0.0", "--port", "8080"]
