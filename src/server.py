@@ -3,6 +3,7 @@
 # vim: tabstop=2 shiftwidth=2 softtabstop=2 expandtab
 
 import os
+import logging
 from dotenv import load_dotenv
 from fastmcp import FastMCP
 from google.api_core.exceptions import InvalidArgument
@@ -10,6 +11,10 @@ from google.cloud import retail_v2
 
 # Load environment variables from .env file
 load_dotenv()
+
+# --- Logger Setup ---
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
 
 # --- Google Cloud Settings ---
 PROJECT_ID = os.getenv("PROJECT_ID")
@@ -60,16 +65,16 @@ def search_products(query: str, visitor_id: str = "guest-user"):
             page_size=5,  # Limit the number of results to 5
         )
 
-        print(f"Vertex AI Search request: {search_request}")
+        logger.debug(f"Vertex AI Search request: {search_request}")
         
         search_response = search_client.search(request=search_request)
 
-        print(f"Vertex AI Search response: {search_response}")
+        logger.debug(f"Vertex AI Search response: {search_response}")
 
         for result in search_response.results:
             # Get the full resource name of the product from the search result.
             product_name = result.product.name
-            print(f"Fetching details for product: {product_name}")
+            logger.info(f"Fetching details for product: {product_name}")
 
             # Use ProductServiceClient to get the full details of the product.
             product_detail = product_client.get_product(name=product_name)
@@ -79,14 +84,14 @@ def search_products(query: str, visitor_id: str = "guest-user"):
             yield product_dict
 
     except InvalidArgument as e:
-        print(f"API call error: {e}")
+        logger.error(f"API call error: {e}")
         yield {"error": "Invalid argument. Please check your serving config.", "details": str(e)}
     except Exception as e:
-        print(f"Unexpected error: {e}")
+        logger.error(f"Unexpected error: {e}")
         yield {"error": "An error occurred while searching for products.", "details": str(e)}
 
 
 if __name__ == "__main__":
-    print("Starting Vertex AI Search for Retail MCP server.")
-    print(f"Placement set to: {placement}")
+    logger.info("Starting Vertex AI Search for Retail MCP server.")
+    logger.info(f"Placement set to: {placement}")
     mcp.run(transport="http")
