@@ -16,7 +16,7 @@
 -   [uv](https://github.com/astral-sh/uv) (빠른 Python 패키지 설치 및 가상 환경 관리 도구)
 -   [Google Cloud CLI](https://cloud.google.com/sdk/docs/install) (`gcloud`)
 
-## ��치 및 설정
+## 설치 및 설정
 
 1.  **Google Cloud 인증**
 
@@ -222,3 +222,11 @@ gcloud run deploy mcp-vaisr-server \
 -   `--allow-unauthenticated`: 이 플래그는 누구나 서비스에 접근할 수 있도록 허용합니다. 인증이 필요한 경우 이 플래그를 제거하세요.
 
 배포가 완료되면 출력된 서비스 URL을 통해 애플리케이션에 접근할 수 있습니다.
+
+---
+
+## Reference
+
+-   [Model Context Protocol (MCP) - Introduction](https://modelcontextprotocol.io/introduction)
+-   [FastMCP - Quickstart](https://gofastmcp.com/getting-started/quickstart)
+-   [MCP Tools Documentation](https://google.github.io/adk-docs/tools/mcp-tools/)
