@@ -230,6 +230,7 @@ Once the deployment is complete, you can access your application via the provide
 -  [Model Context Protocol (MCP) - Introduction](https://modelcontextprotocol.io/introduction)
 -  [FastMCP - Quickstart](https://gofastmcp.com/getting-started/quickstart)
 -  [MCP Tools Documentation](https://google.github.io/adk-docs/tools/mcp-tools/)
+-  [MCP Inspector](https://modelcontextprotocol.io/docs/tools/inspector): an interactive developer tool for testing and debugging MCP servers
 -  [Importing Catalog Information to Vertex AI Search for Commerce](https://cloud.google.com/retail/docs/retail-api-tutorials#import_catalog_information)
     -  💻 [Sample Code on GitHub](https://github.com/GoogleCloudPlatform/python-docs-samples/tree/main/retail/interactive-tutorials/product)
 -  [Searching for Products with Vertex AI Search for Commerce](https://cloud.google.com/retail/docs/retail-api-tutorials#search_tutorials)
