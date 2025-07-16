@@ -222,3 +222,11 @@ gcloud run deploy mcp-vaisr-server \
 -   `--allow-unauthenticated`: This flag allows anyone to access the service. If authentication is required, remove this flag.
 
 Once the deployment is complete, you can access your application via the provided service URL.
+
+---
+
+## Reference
+
+-   [Model Context Protocol (MCP) - Introduction](https://modelcontextprotocol.io/introduction)
+-   [FastMCP - Quickstart](https://gofastmcp.com/getting-started/quickstart)
+-   [MCP Tools Documentation](https://google.github.io/adk-docs/tools/mcp-tools/)
