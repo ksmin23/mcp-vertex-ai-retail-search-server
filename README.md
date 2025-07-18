@@ -209,19 +209,35 @@ This command sends the source code from the current directory to Cloud Build, bu
 
 ### 5. Deploy to Cloud Run
 
-Deploy the pushed image as a Cloud Run service.
+You can deploy the service in two ways: publicly accessible or restricted to a VPC.
+
+#### Public Deployment
+
+The following command deploys the service to be publicly accessible. The `--ingress all` setting is default, and `--allow-unauthenticated` permits public access.
 
 ```bash
 gcloud run deploy mcp-vaisr-server \
     --image [REGION]-docker.pkg.dev/[YOUR_PROJECT_ID]/[REPOSITORY_NAME]/mcp-vertexai-retail-search-server:latest \
     --region [REGION] \
-    --network [VPC] \
-    --subnet [SUBNET] \
     --allow-unauthenticated
 ```
 -   `--allow-unauthenticated`: This flag allows anyone to access the service. If authentication is required, remove this flag.
 
 Once the deployment is complete, you can access your application via the provided service URL.
+
+#### Secure Deployment within a VPC
+
+To deploy the service so that it is only accessible from within a specific VPC network for enhanced security, use the `deploy_to_cloud_run.py` script. This script sets the ingress settings to `internal`, allowing access only from the specified VPC network.
+
+```bash
+python deploy_to_cloud_run.py --service-name internal-mcp-vaisr-server \
+--network [VPC] \
+--subnet [SUBNET] \
+--ingress internal \
+--vpc-egress all-traffic
+```
+
+For more details on Cloud Run ingress settings, refer to the [official documentation](https://cloud.google.com/run/docs/securing/ingress?authuser=2).
 
 ---
 

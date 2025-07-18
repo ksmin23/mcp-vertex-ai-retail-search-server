@@ -209,19 +209,35 @@ gcloud builds submit --tag [REGION]-docker.pkg.dev/[YOUR_PROJECT_ID]/[REPOSITORY
 
 ### 5. Cloud Run 배포
 
-푸시된 이미지를 사용하여 Cloud Run 서비스를 배포합니다.
+서비스를 배포하는 방법은 공개적으로 접근을 허용하거나 VPC로 제한하는 두 가지가 있습니다.
+
+#### 공개 배포
+
+다음 명령어는 서비스를 공개적으로 접근할 수 있도록 배포합니다. `--ingress all` 설정이 기본값이며, `--allow-unauthenticated`는 공개 액세스를 허용합니다.
 
 ```bash
 gcloud run deploy mcp-vaisr-server \
     --image [REGION]-docker.pkg.dev/[YOUR_PROJECT_ID]/[REPOSITORY_NAME]/mcp-vertexai-retail-search-server:latest \
     --region [REGION] \
-    --network [VPC] \
-    --subnet [SUBNET] \
     --allow-unauthenticated
 ```
 -   `--allow-unauthenticated`: 이 플래그는 누구나 서비스에 접근할 수 있도록 허용합니다. 인증이 필요한 경우 이 플래그를 제거하세요.
 
 배포가 완료되면 출력된 서비스 URL을 통해 애플리케이션에 접근할 수 있습니다.
+
+#### VPC 내 보안 배포
+
+보안 강화를 위해 특정 VPC 네트워크 내에서만 서비스에 접근할 수 있도록 배포하려면 `deploy_to_cloud_run.py` 스크립트를 사용합니다. 이 스크립트는 인그레스 설정을 `internal`로 지정하여 특정 VPC 네트워크에서만 접근을 허용합니다.
+
+```bash
+python deploy_to_cloud_run.py --service-name internal-mcp-vaisr-server \
+--network [VPC] \
+--subnet [SUBNET] \
+--ingress internal \
+--vpc-egress all-traffic
+```
+
+Cloud Run의 인그레스 설정에 대한 자세한 내용은 [공식 문서](https://cloud.google.com/run/docs/securing/ingress?authuser=2)를 참고하세요.
 
 ---
 
