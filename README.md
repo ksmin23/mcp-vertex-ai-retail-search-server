@@ -217,17 +217,17 @@ When deploying to Cloud Run, it's a best practice to use a dedicated service acc
     First, create a new service account for your Cloud Run service.
 
     ```bash
-    gcloud iam service-accounts create mcp-cloud-run-sa \
+    gcloud iam service-accounts create mcp-vaisc-sa \
         --display-name="MCP Cloud Run Service Account"
     ```
-    - `mcp-cloud-run-sa`: This is the ID of the service account. You can change it to your desired name.
+    - `mcp-vaisc-sa`: This is the ID of the service account. You can change it to your desired name.
 
 2.  **Grant Permissions**:
     The service account needs permissions to access the Vertex AI Search for Commerce API. Grant the `Retail Viewer` role to the service account, which provides the necessary read-only permissions for searching products.
 
     ```bash
     gcloud projects add-iam-policy-binding [YOUR_PROJECT_ID] \
-        --member="serviceAccount:mcp-cloud-run-sa@[YOUR_PROJECT_ID].iam.gserviceaccount.com" \
+        --member="serviceAccount:mcp-vaisc-sa@[YOUR_PROJECT_ID].iam.gserviceaccount.com" \
         --role="roles/retail.viewer"
     ```
     - Replace `[YOUR_PROJECT_ID]` with your actual GCP project ID.
@@ -244,7 +244,7 @@ The following command deploys the service to be publicly accessible. The `--ingr
 gcloud run deploy mcp-vaisr-server \
     --image [REGION]-docker.pkg.dev/[YOUR_PROJECT_ID]/[REPOSITORY_NAME]/mcp-vertexai-retail-search-server:latest \
     --region [REGION] \
-    --service-account "mcp-cloud-run-sa@[YOUR_PROJECT_ID].iam.gserviceaccount.com" \
+    --service-account "mcp-vaisc-sa@[YOUR_PROJECT_ID].iam.gserviceaccount.com" \
     --allow-unauthenticated
 ```
 -   `--allow-unauthenticated`: This flag allows anyone to access the service. If authentication is required, remove this flag.
@@ -260,7 +260,7 @@ python deploy_to_cloud_run.py --service-name internal-mcp-vaisr-server \
 --subnet [SUBNET] \
 --ingress internal \
 --vpc-egress all-traffic \
---service-account "mcp-cloud-run-sa@[YOUR_PROJECT_ID].iam.gserviceaccount.com"
+--service-account "mcp-vaisc-sa@[YOUR_PROJECT_ID].iam.gserviceaccount.com"
 ```
 
 For more details on Cloud Run ingress settings, refer to the [official documentation](https://cloud.google.com/run/docs/securing/ingress?authuser=2).
