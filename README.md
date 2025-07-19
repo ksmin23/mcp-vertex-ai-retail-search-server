@@ -209,6 +209,31 @@ This command sends the source code from the current directory to Cloud Build, bu
 
 ### 5. Deploy to Cloud Run
 
+When deploying to Cloud Run, it's a best practice to use a dedicated service account to grant the service the minimum permissions required. This enhances security by following the principle of least privilege.
+
+#### Using a Service Account
+
+1.  **Create a Service Account**:
+    First, create a new service account for your Cloud Run service.
+
+    ```bash
+    gcloud iam service-accounts create mcp-cloud-run-sa \
+        --display-name="MCP Cloud Run Service Account"
+    ```
+    - `mcp-cloud-run-sa`: This is the ID of the service account. You can change it to your desired name.
+
+2.  **Grant Permissions**:
+    The service account needs permissions to access the Vertex AI Search for Commerce API. Grant the `Retail Viewer` role to the service account, which provides the necessary read-only permissions for searching products.
+
+    ```bash
+    gcloud projects add-iam-policy-binding [YOUR_PROJECT_ID] \
+        --member="serviceAccount:mcp-cloud-run-sa@[YOUR_PROJECT_ID].iam.gserviceaccount.com" \
+        --role="roles/retail.viewer"
+    ```
+    - Replace `[YOUR_PROJECT_ID]` with your actual GCP project ID.
+
+Now, you can deploy the service with this service account.
+
 You can deploy the service in two ways: publicly accessible or restricted to a VPC.
 
 #### Public Deployment
@@ -219,11 +244,11 @@ The following command deploys the service to be publicly accessible. The `--ingr
 gcloud run deploy mcp-vaisr-server \
     --image [REGION]-docker.pkg.dev/[YOUR_PROJECT_ID]/[REPOSITORY_NAME]/mcp-vertexai-retail-search-server:latest \
     --region [REGION] \
+    --service-account "mcp-cloud-run-sa@[YOUR_PROJECT_ID].iam.gserviceaccount.com" \
     --allow-unauthenticated
 ```
 -   `--allow-unauthenticated`: This flag allows anyone to access the service. If authentication is required, remove this flag.
 
-Once the deployment is complete, you can access your application via the provided service URL.
 
 #### Secure Deployment within a VPC
 
@@ -234,10 +259,14 @@ python deploy_to_cloud_run.py --service-name internal-mcp-vaisr-server \
 --network [VPC] \
 --subnet [SUBNET] \
 --ingress internal \
---vpc-egress all-traffic
+--vpc-egress all-traffic \
+--service-account "mcp-cloud-run-sa@[YOUR_PROJECT_ID].iam.gserviceaccount.com"
 ```
 
 For more details on Cloud Run ingress settings, refer to the [official documentation](https://cloud.google.com/run/docs/securing/ingress?authuser=2).
+
+Once the deployment is complete, you can access your application via the provided service URL.
+
 
 ---
 

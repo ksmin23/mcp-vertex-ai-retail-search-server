@@ -209,6 +209,32 @@ gcloud builds submit --tag [REGION]-docker.pkg.dev/[YOUR_PROJECT_ID]/[REPOSITORY
 
 ### 5. Cloud Run 배포
 
+Cloud Run에 배포할 때는 전용 서비스 계정을 사용하여 서비스에 필요한 최소한의 권한만 부여하는 것이 가장 좋습니다. 이는 최소 권한의 원칙을 따라 보안을 강화합니다.
+
+#### 서비스 계정 사용
+
+1.  **서비스 계정 생성**:
+    먼저 Cloud Run 서비스에 사용할 새 서비스 계정을 만듭니다.
+
+    ```bash
+gcloud iam service-accounts create mcp-cloud-run-sa \
+    --display-name="MCP Cloud Run Service Account"
+    ```
+    - `mcp-cloud-run-sa`: 서비스 계정의 ID입니다. 원하는 이름으로 변경할 수 있습니다.
+
+2.  **권한 부여**:
+    서비스 계정은 Vertex AI Search for Commerce API에 접근할 수 있는 권한이 필요합니다. 제품 검색에 필요한 읽기 전용 권한을 제공하는 `Retail 뷰어` 역할을 서비스 계정에 부여합니다.
+
+    ```bash
+    gcloud projects add-iam-policy-binding [YOUR_PROJECT_ID] \
+        --member="serviceAccount:mcp-cloud-run-sa@[YOUR_PROJECT_ID].iam.gserviceaccount.com" \
+        --role="roles/retail.viewer"
+    ```
+    - `[YOUR_PROJECT_ID]`를 실제 GCP 프로젝트 ID로 변경하세요.
+
+
+이제 이 서비스 계정으로 서비스를 배포할 수 있습니다.
+
 서비스를 배포하는 방법은 공개적으로 접근을 허용하거나 VPC로 제한하는 두 가지가 있습니다.
 
 #### 공개 배포
@@ -219,11 +245,11 @@ gcloud builds submit --tag [REGION]-docker.pkg.dev/[YOUR_PROJECT_ID]/[REPOSITORY
 gcloud run deploy mcp-vaisr-server \
     --image [REGION]-docker.pkg.dev/[YOUR_PROJECT_ID]/[REPOSITORY_NAME]/mcp-vertexai-retail-search-server:latest \
     --region [REGION] \
+    --service-account "mcp-cloud-run-sa@[YOUR_PROJECT_ID].iam.gserviceaccount.com" \
     --allow-unauthenticated
 ```
 -   `--allow-unauthenticated`: 이 플래그는 누구나 서비스에 접근할 수 있도록 허용합니다. 인증이 필요한 경우 이 플래그를 제거하세요.
 
-배포가 완료되면 출력된 서비스 URL을 통해 애플리케이션에 접근할 수 있습니다.
 
 #### VPC 내 보안 배포
 
@@ -234,10 +260,14 @@ python deploy_to_cloud_run.py --service-name internal-mcp-vaisr-server \
 --network [VPC] \
 --subnet [SUBNET] \
 --ingress internal \
---vpc-egress all-traffic
+--vpc-egress all-traffic \
+--service-account "mcp-cloud-run-sa@[YOUR_PROJECT_ID].iam.gserviceaccount.com"
 ```
 
 Cloud Run의 인그레스 설정에 대한 자세한 내용은 [공식 문서](https://cloud.google.com/run/docs/securing/ingress?authuser=2)를 참고하세요.
+
+배포가 완료되면 출력된 서비스 URL을 통해 애플리케이션에 접근할 수 있습니다.
+
 
 ---
 

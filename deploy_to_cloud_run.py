@@ -45,6 +45,7 @@ def main():
     
     # Service Configuration
     parser.add_argument("--service-name", required=True, help="Name of the Cloud Run service.")
+    parser.add_argument("--service-account", help="Service account to be used by the Cloud Run service.")
     
     # Network Configuration
     parser.add_argument("--network", help="VPC Network for the service.")
@@ -104,6 +105,8 @@ def main():
     print(f"  Project:         {project_id}")
     print(f"  Region:          {region}")
     print(f"  Service:         {service_name}")
+    if args.service_account:
+        print(f"  Service Account: {args.service_account}")
     print(f"  Image:           {image_name}")
     if vpc_network:
         print(f"  Network:         {vpc_network}")
@@ -134,6 +137,9 @@ def main():
     
     if subnet:
         gcloud_command.extend(["--subnet", subnet])
+
+    if args.service_account:
+        gcloud_command.extend(["--service-account", args.service_account])
 
     if args.dry_run:
         print("DRY RUN: The following command would be executed:\n")
