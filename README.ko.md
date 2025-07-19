@@ -218,7 +218,7 @@ Cloud Run에 배포할 때는 전용 서비스 계정을 사용하여 서비스�
 
     ```bash
 gcloud iam service-accounts create mcp-vaisc-sa \
-    --display-name="MCP Cloud Run Service Account"
+    --display-name="MCP Vertex AI Search for Commerce Service Account"
     ```
     - `mcp-vaisc-sa`: 서비스 계정의 ID입니다. 원하는 이름으로 변경할 수 있습니다.
 

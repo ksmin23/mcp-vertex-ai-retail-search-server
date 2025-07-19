@@ -218,7 +218,7 @@ When deploying to Cloud Run, it's a best practice to use a dedicated service acc
 
     ```bash
     gcloud iam service-accounts create mcp-vaisc-sa \
-        --display-name="MCP Cloud Run Service Account"
+        --display-name="MCP Vertex AI Search for Commerce Service Account"
     ```
     - `mcp-vaisc-sa`: This is the ID of the service account. You can change it to your desired name.
 
@@ -256,11 +256,11 @@ To deploy the service so that it is only accessible from within a specific VPC n
 
 ```bash
 python deploy_to_cloud_run.py --service-name internal-mcp-vaisr-server \
---network [VPC] \
---subnet [SUBNET] \
---ingress internal \
---vpc-egress all-traffic \
---service-account "mcp-vaisc-sa@[YOUR_PROJECT_ID].iam.gserviceaccount.com"
+    --network [VPC] \
+    --subnet [SUBNET] \
+    --ingress internal \
+    --vpc-egress all-traffic \
+    --service-account "mcp-vaisc-sa@[YOUR_PROJECT_ID].iam.gserviceaccount.com"
 ```
 
 For more details on Cloud Run ingress settings, refer to the [official documentation](https://cloud.google.com/run/docs/securing/ingress?authuser=2).
