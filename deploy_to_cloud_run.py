@@ -56,7 +56,12 @@ def main():
         choices=['internal', 'all', 'internal-and-cloud-load-balancing'],
         help="Ingress control for the service."
     )
-    parser.add_argument("--vpc-egress", default="private-ranges-only", help="VPC egress control.")
+    parser.add_argument(
+        "--vpc-egress",
+        default="all-traffic",
+        choices=['all-traffic', 'private-ranges-only'],
+        help="VPC egress control."
+    )
     
     # Execution Mode
     parser.add_argument("--dry-run", action="store_true", help="Print the gcloud command without executing it.")
