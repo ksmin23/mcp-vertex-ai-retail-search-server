@@ -268,6 +268,12 @@ For more details on Cloud Run ingress settings, refer to the [official documenta
 Once the deployment is complete, you can access your application via the provided service URL.
 
 
+### 6. Import Catalog Data to Vertex AI Search for Commerce
+
+For instructions on how to import catalog data, please refer to the following guide:
+[Import catalog data](https://github.com/GoogleCloudPlatform/python-docs-samples/tree/main/retail/interactive-tutorials#import-catalog-data)
+
+
 ---
 
 ## Reference
