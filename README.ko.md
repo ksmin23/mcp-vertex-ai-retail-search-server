@@ -90,11 +90,16 @@ INFO:     Uvicorn running on http://127.0.0.1:9000 (Press CTRL+C to quit)
 
 ### `search_products`
 
--   **설명**: 제품 카탈로그에서 주어진 검색어로 제품을 검색합니다.
+-   **설명**: 제품 카탈로그에서 주어진 검색어로 제품을 검색합니다. 검색 필터링 및 정렬에 대한 자세한 내용은 [공식 문서](https://cloud.google.com/retail/docs/filter-and-order)를 참고하세요.
 -   **매개변수**:
     -   `query` (str): 검색할 제품 키워드 (예: "청바지", "운동화").
     -   `visitor_id` (str, 선택 사항): 사용자를 식별하는 고유 ID. 개인화된 검색 결과에 사용됩니다. (기본값: "guest-user")
--   **반환값**: 검색된 제품 목록 (각 제품은 `id`, `title`, `price`, `uri` 정보를 포함하는 딕셔너리).
+    -   `brand` (str, 선택 사항): 필터링할 브랜드.
+    -   `color_families` (str, 선택 사항): 필터링할 색상 계열.
+    -   `category` (str, 선택 사항): 필터링할 카테고리.
+    -   `size` (str, 선택 사항): 필터링할 사이즈.
+    -   `page_size` (int): 페이지당 반환할 결과 수. (기본값: 10)
+-   **반환값**: 검색된 각 제품의 전체 상세 정보가 포함된 딕셔너리의 스트림.
 
 ---
 

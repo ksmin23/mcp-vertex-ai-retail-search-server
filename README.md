@@ -90,11 +90,16 @@ This MCP server provides the following tool:
 
 ### `search_products`
 
--   **Description**: Searches for products in the product catalog based on a given query.
+-   **Description**: Searches for products in the product catalog based on a given query. For detailed information on filtering and ordering, see the [official documentation](https://cloud.google.com/retail/docs/filter-and-order).
 -   **Parameters**:
     -   `query` (str): The product keyword to search for (e.g., "jeans", "sneakers").
     -   `visitor_id` (str, optional): A unique ID to identify the user. Used for personalized search results. (Default: "guest-user")
--   **Returns**: A list of searched products (each product is a dictionary containing `id`, `title`, `price`, and `uri` information).
+    -   `brand` (str, optional): Brand to filter by.
+    -   `color_families` (str, optional): Color family to filter by.
+    -   `category` (str, optional): Category to filter by.
+    -   `size` (str, optional): Size to filter by.
+    -   `page_size` (int): The number of results to return per page. (Default: 10)
+-   **Returns**: A stream of dictionaries, where each dictionary contains the full details of a found product.
 
 ---
 
