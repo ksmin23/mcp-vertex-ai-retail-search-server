@@ -94,7 +94,7 @@ INFO:     Uvicorn running on http://127.0.0.1:9000 (Press CTRL+C to quit)
 -   **매개변수**:
     -   `query` (str): 검색할 제품 키워드 (예: "청바지", "운동화").
     -   `visitor_id` (str, 선택 사항): 사용자를 식별하는 고유 ID. 개인화된 검색 결과에 사용됩니다. (기본값: "guest-user")
--   **반환값**: 검색된 제품 목록 (각 제품은 `id`, `title`, `price`, `uri` 정보를 포���하는 딕셔너리).
+-   **반환값**: 검색된 제품 목록 (각 제품은 `id`, `title`, `price`, `uri` 정보를 포함하는 딕셔너리).
 
 ---
 
@@ -267,6 +267,11 @@ python deploy_to_cloud_run.py --service-name internal-mcp-vaisr-server \
 Cloud Run의 인그레스 설정에 대한 자세한 내용은 [공식 문서](https://cloud.google.com/run/docs/securing/ingress?authuser=2)를 참고하세요.
 
 배포가 완료되면 출력된 서비스 URL을 통해 애플리케이션에 접근할 수 있습니다.
+
+### 6. Vertex AI Search for Commerce에 카탈로그 데이터 가져오기
+
+카탈로그 데이터를 가져오는 방법에 대한 지침은 다음 가이드를 참조하세요:
+[카탈로그 데이터 가져오기](https://github.com/GoogleCloudPlatform/python-docs-samples/tree/main/retail/interactive-tutorials#import-catalog-data)
 
 
 ---
