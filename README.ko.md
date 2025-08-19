@@ -1,6 +1,6 @@
 # Vertex AI Search for Commerce MCP 서버
 
-이 프로젝트는 [FastMCP](https://github.com/fastmcp/fastmcp-py)를 사용하여 Google Cloud의 [Vertex AI Search for Commerce](https://cloud.google.com/retail) API를 도구(Tool)로 제공하는 Model Context Protocol (MCP) 서버 예제입니다.
+이 프로젝트는 [FastMCP](https://github.com/fastmcp/fastmcp-py)를 사용하여 Google Cloud의 [Vertex AI Search for Commerce](https://cloud.google.com/solutions/vertex-ai-search-commerce?hl=en) API를 도구(Tool)로 제공하는 Model Context Protocol (MCP) 서버 예제입니다.
 
 이 서버를 통해 AI 에이전트는 자연어 쿼리를 사용하여 제품 카탈로그를 검색할 수 있습니다.
 
